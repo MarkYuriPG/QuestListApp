@@ -7,7 +7,7 @@
     tools:context=".MainActivity">
 
     <TextView
-        android:id="@+id/tasksText"
+        android:id="@+id/questsText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textStyle="bold"
@@ -17,7 +17,28 @@
         android:layout_marginBottom="16dp"
         android:layout_marginTop="16dp"
         android:textSize="32sp"
-        ></TextView>
+        android:backgroundTint="@android:color/black"
+        tools:ignore="HardcodedText"/>
 
+    <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/questRecyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/questsText"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            android:nestedScrollingEnabled="true"
+            />
 
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/floatingActionButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginEnd="179dp"
+        android:layout_marginBottom="36dp"
+        android:backgroundTint="@android:color/holo_orange_dark"
+        android:src="@drawable/baseline_add_24"
+        tools:ignore="ContentDescription,SpeakableTextPresentCheck,ImageContrastCheck"/>
+    
 </RelativeLayout>
