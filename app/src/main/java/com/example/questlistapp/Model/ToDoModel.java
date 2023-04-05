@@ -27,7 +27,7 @@ public class ToDoModel
         this.status = status;
     }
 
-    public String getTodo()
+    public String getTask()
     {
         return todo;
     }

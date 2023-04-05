@@ -10,4 +10,7 @@
     <color name="caramel">#65350F</color>
     <color name="flesh">#FFD6AC</color>
     <color name="pastel_yellow">#FEFEE4</color>
+    <color name="colorPrimary">@android:color/holo_green_dark</color>>
+    <color name="colorPrimaryDark">@android:color/holo_green_dark</color>>
+    <color name="colorAccent">@android:color/white</color>>
 </resources>
