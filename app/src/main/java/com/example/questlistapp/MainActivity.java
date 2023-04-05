@@ -17,7 +17,7 @@ public class MainActivity extends AppCompatActivity {
     private RecyclerView questRecyclerView;
     private ToDoAdapter questAdapter;
 
-    private List<ToDoModel> questList;
+    private List<ToDoModel> todolist;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -25,7 +25,7 @@ public class MainActivity extends AppCompatActivity {
 
         getSupportActionBar().hide();
 
-        questList = new ArrayList<>();
+        todolist = new ArrayList<>();
 
         questRecyclerView = findViewById(R.id.questRecyclerView);
         questRecyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -33,17 +33,17 @@ public class MainActivity extends AppCompatActivity {
         questRecyclerView.setAdapter(questAdapter);
 
         ToDoModel quest = new ToDoModel();
-        quest.setQuest("This is a Quest!!!");
+        quest.setTask("This is a Quest!!!");
         quest.setStatus(0);
         quest.setId(1);
 
-        questList.add(quest);
-        questList.add(quest);
-        questList.add(quest);
-        questList.add(quest);
-        questList.add(quest);
+        todolist.add(quest);
+        todolist.add(quest);
+        todolist.add(quest);
+        todolist.add(quest);
+        todolist.add(quest);
 
-        questAdapter.setQuest(questList);
+        questAdapter.setToDoList(todolist);
 
     }
 }

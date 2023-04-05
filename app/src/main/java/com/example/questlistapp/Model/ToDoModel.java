@@ -4,7 +4,7 @@ public class ToDoModel
 {
 
     private int id, status;
-    private String quest;
+    private String todo;
 
 
     public int getId()
@@ -27,13 +27,13 @@ public class ToDoModel
         this.status = status;
     }
 
-    public String getQuest()
+    public String getTodo()
     {
-        return quest;
+        return todo;
     }
 
-    public void setQuest(String task)
+    public void setTask(String task)
     {
-        this.quest = task;
+        this.todo = task;
     }
 }

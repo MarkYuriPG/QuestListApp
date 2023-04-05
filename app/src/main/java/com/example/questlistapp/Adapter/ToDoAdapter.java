@@ -27,7 +27,7 @@ public class ToDoAdapter extends RecyclerView.Adapter<ToDoAdapter.ViewHolder>
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType)
     {
         View itemView = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.quest_layout, parent, false);
+                .inflate(R.layout.todolist_layout, parent, false);
 
         return new ViewHolder(itemView);
     }
@@ -36,8 +36,8 @@ public class ToDoAdapter extends RecyclerView.Adapter<ToDoAdapter.ViewHolder>
     public void onBindViewHolder(ViewHolder holder, int position)
     {
         ToDoModel item = toDoList.get(position);
-        holder.quest.setText(item.getQuest());
-        holder.quest.setChecked(toBoolean(item.getStatus()));
+        holder.todo.setText(item.getTodo());
+        holder.todo.setChecked(toBoolean(item.getStatus()));
     }
 
     public int getItemCount()
@@ -50,7 +50,7 @@ public class ToDoAdapter extends RecyclerView.Adapter<ToDoAdapter.ViewHolder>
         return n!=0;
     }
 
-    public void setQuest(List<ToDoModel> toDoList)
+    public void setToDoList(List<ToDoModel> toDoList)
     {
         this.toDoList = toDoList;
         notifyDataSetChanged();
@@ -58,12 +58,12 @@ public class ToDoAdapter extends RecyclerView.Adapter<ToDoAdapter.ViewHolder>
 
     public  static class  ViewHolder extends  RecyclerView.ViewHolder
     {
-        CheckBox quest;
+        CheckBox todo;
 
         ViewHolder(View view)
         {
             super(view);
-            quest = view.findViewById(R.id.todoCheckBox);
+            todo = view.findViewById(R.id.todoCheckBox);
         }
 
     }
