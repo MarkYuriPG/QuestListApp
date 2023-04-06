@@ -7,15 +7,22 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
 
 import com.example.questlistapp.Adapter.ToDoAdapter;
 import com.example.questlistapp.Model.ToDoModel;
 import com.example.questlistapp.Utils.DatabaseHandler;
 
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
+import java.util.ListIterator;
+import java.util.Objects;
 
 public class MainActivity extends AppCompatActivity implements DialogCloseListener{
 
@@ -23,6 +30,8 @@ public class MainActivity extends AppCompatActivity implements DialogCloseListen
     private ToDoAdapter taskAdapter;
     private DatabaseHandler db;
     private List<ToDoModel> taskList;
+    private FloatingActionButton fab;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -38,34 +47,21 @@ public class MainActivity extends AppCompatActivity implements DialogCloseListen
         taskAdapter = new ToDoAdapter(db,MainActivity.this);
         taskRecyclerView.setAdapter(taskAdapter);
 
-//        ToDoModel quest = new ToDoModel();
-//        quest.setTask("This is a Quest!!!");
-//        quest.setStatus(0);
-//        quest.setId(1);
-//
-//
-//        taskList.add(quest);
-//        taskList.add(quest);
-//        taskList.add(quest);
-//        taskList.add(quest);
-//        taskList.add(quest);
-//        taskList.add(quest);
-//
-//        taskAdapter.setTaskList(taskList);
         ItemTouchHelper itemTouchHelper = new ItemTouchHelper(new RecyclerItemTouchHelper(taskAdapter));
         itemTouchHelper.attachToRecyclerView(taskRecyclerView);
+
+        fab = findViewById(R.id.floatingActionButton);
+
         taskList = db.getAllTasks();
         Collections.reverse(taskList);
         taskAdapter.setTaskList(taskList);
 
-    }
-
-    @Override
-    public void handleDialogClsoe(DialogInterface dialog) {
-        taskList = db.getAllTasks();
-        Collections.reverse(taskList);
-        taskAdapter.setTask(taskList);
-        taskAdapter.notifyDataSetChanged();
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                AddNewTask.newInstance().show(getSupportFragmentManager(), AddNewTask.TAG);
+            }
+        });
     }
 
     @Override
