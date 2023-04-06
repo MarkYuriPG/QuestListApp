@@ -21,7 +21,6 @@ import com.example.questlistapp.Model.ToDoModel;
 import com.example.questlistapp.Utils.DatabaseHandler;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 
-
 public class AddNewTask extends BottomSheetDialogFragment{
     public static final  String TAG = "ActionBottomDialog";
 
@@ -53,7 +52,7 @@ public class AddNewTask extends BottomSheetDialogFragment{
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        newTaskText = requireView().findViewById(R.id.newQuestButton);
+        newTaskText = requireView().findViewById(R.id.newQuestText);
         newTaskSaveButton = getView().findViewById(R.id.newQuestButton);
 
         boolean isUpdate = false;
