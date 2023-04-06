@@ -15,7 +15,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.questlistapp.Adapter.ToDoAdapter;
 public class RecyclerItemTouchHelper extends ItemTouchHelper.SimpleCallback {
     private final ToDoAdapter adapter;
-    RecyclerItemTouchHelper(ToDoAdapter adapter){
+    public RecyclerItemTouchHelper(ToDoAdapter adapter){
         super(0,ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT);
         this.adapter = adapter;
     }
