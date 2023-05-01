@@ -12,7 +12,7 @@
         android:theme="@style/Theme.QuestListApp"
         tools:targetApi="31">
         <activity
-            android:name=".Calendar"
+            android:name=".CalendarView"
             android:exported="false" />
         <activity
             android:name=".SplashActivity"

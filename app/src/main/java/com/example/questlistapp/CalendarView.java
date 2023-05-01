@@ -5,14 +5,13 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
-import android.widget.CalendarView;
 import android.widget.Toast;
 
 import java.util.Objects;
 
-public class Calendar extends AppCompatActivity {
+public class CalendarView extends AppCompatActivity {
 
-    CalendarView calendarView;
+    android.widget.CalendarView calendarView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -22,12 +21,12 @@ public class Calendar extends AppCompatActivity {
 
 
         calendarView = findViewById(R.id.calendarView);
-        calendarView.setOnDateChangeListener(new CalendarView.OnDateChangeListener() {
+        calendarView.setOnDateChangeListener(new android.widget.CalendarView.OnDateChangeListener() {
             @Override
-            public void onSelectedDayChange(@NonNull CalendarView view, int year, int month, int dayOfMonth) {
+            public void onSelectedDayChange(@NonNull android.widget.CalendarView view, int year, int month, int dayOfMonth) {
                 // Display the selected date in a toast message
                 String message = "Selected date: " + dayOfMonth + "/" + (month + 1) + "/" + year;
-                Toast.makeText(Calendar.this, message, Toast.LENGTH_SHORT).show();
+                Toast.makeText(CalendarView.this, message, Toast.LENGTH_SHORT).show();
             }
         });
 

@@ -90,7 +90,7 @@ public class MainActivity extends AppCompatActivity implements DialogCloseListen
                 break;
 
             case R.id.CalendarItem:
-                Intent calendar = new Intent(this, Calendar.class);
+                Intent calendar = new Intent(this, CalendarView.class);
                 startActivity(calendar);
                 break;
         }

@@ -1,5 +1,6 @@
 package com.example.questlistapp.Utils;
 
+import android.annotation.SuppressLint;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -9,6 +10,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 import com.example.questlistapp.Model.ToDoModel;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class DatabaseHandler extends SQLiteOpenHelper {
@@ -18,8 +20,10 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     private static final String ID = "id";
     private static final String TASK = "task";
     private static final String STATUS = "status";
+
+    private static final String DEADLINE = "deadline";
     private static final String CREATE_TODO_TABLE = "CREATE TABLE " + TODO_TABLE + "(" + ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " + TASK + " TEXT, "
-            + STATUS + " INTEGER)";
+            + STATUS + " INTEGER, " + DEADLINE + " TEXT) ";
     private SQLiteDatabase db;
 
     public DatabaseHandler(Context context) {
@@ -44,11 +48,17 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     }
 
     public void insertTask(ToDoModel task){
-        ContentValues cv = new ContentValues();
-        cv.put(TASK, task.getTask());
-        cv.put(STATUS, 0);
-        db.insert(TODO_TABLE, null, cv);
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+
+        values.put("task", task.getTask());
+        values.put("status", task.getStatus());
+        values.put("deadline", String.valueOf(task.getDeadline()));
+
+        db.insert(TODO_TABLE, null, values);
     }
+
+    @SuppressLint("Range")
     public List<ToDoModel> getAllTasks(){
         List<ToDoModel> taskList = new ArrayList<>();
         Cursor cur = null;
@@ -62,6 +72,12 @@ public class DatabaseHandler extends SQLiteOpenHelper {
                         task.setId(cur.getInt(cur.getColumnIndex(ID)));
                         task.setTask(cur.getString(cur.getColumnIndex(TASK)));
                         task.setStatus(cur.getInt(cur.getColumnIndex(STATUS)));
+                        long deadlineMillis = cur.getLong(cur.getColumnIndex(DEADLINE));
+
+                        if (deadlineMillis > 0) {
+                            task.setDeadline(new Date(deadlineMillis));
+                        }
+
                         taskList.add(task);
                     }
                     while(cur.moveToNext());
@@ -90,5 +106,11 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 
     public void deleteTask(int id){
         db.delete(TODO_TABLE, ID + "= ?", new String[] {String.valueOf(id)});
+    }
+
+    public void updateDeadline(int id, long deadline) {
+        ContentValues values = new ContentValues();
+        values.put(DEADLINE, deadline);
+        db.update(TODO_TABLE, values, ID + "=?", new String[]{String.valueOf(id)});
     }
 }
