@@ -5,6 +5,7 @@ import android.app.TimePickerDialog;
 import android.content.Context;
 import android.os.Bundle;
 import android.text.format.DateFormat;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -40,6 +41,7 @@ public class ToDoAdapter extends RecyclerView.Adapter<ToDoAdapter.ViewHolder>
     {
         this.db = db;
         this.activity = activity;
+        this.todoList = db.getAllTasks();
     }
 
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType)
@@ -53,25 +55,26 @@ public class ToDoAdapter extends RecyclerView.Adapter<ToDoAdapter.ViewHolder>
 
     public void onBindViewHolder(ViewHolder holder, int position)
     {
-        db.openDatabase();
-        ToDoModel item = todoList.get(position);
-        holder.task.setText(item.getTask());
+            db.openDatabase();
+            ToDoModel item = todoList.get(position);
+            holder.task.setText(item.getTask());
 
-        Date deadlineValue = item.getDeadline();
-        if (deadlineValue != null) {
-            holder.deadline.setText(formatDeadline(deadlineValue.getTime()));
-       } else {
-            holder.deadline.setText("Tap to set deadline");
-        }
 
-        holder.task.setChecked(toBoolean(item.getStatus()));
-        holder.task.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener(){
+            Date deadlineValue = item.getDeadline();
+            if (deadlineValue != null) {
+                holder.deadline.setText(formatDeadline(deadlineValue.getTime()));
+            } else {
+                holder.deadline.setText("Tap to set deadline");
+            }
+
+            holder.task.setChecked(toBoolean(item.getStatus()));
+            holder.task.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 @Override
                 public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                    if(isChecked){
-                        db.updateStatus(item.getId(),1);
-                    }else{
-                        db.updateStatus(item.getId(),0);
+                    if (isChecked) {
+                        db.updateStatus(item.getId(), 1);
+                    } else {
+                        db.updateStatus(item.getId(), 0);
                     }
                 }
             });
@@ -101,10 +104,10 @@ public class ToDoAdapter extends RecyclerView.Adapter<ToDoAdapter.ViewHolder>
         return activity;
     }
     public void deleteItem(int position){
-        ToDoModel item = todoList.get(position);
-        db.deleteTask(item.getId());
+        db.openDatabase();
+        db.deleteTask(todoList.get(position).getId());
         todoList.remove(position);
-        notifyItemChanged(position);
+        notifyItemRemoved(position);
     }
     public void setTask(List<ToDoModel> todoList){
         this.todoList = todoList;

@@ -11,6 +11,7 @@ import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -58,7 +59,12 @@ public class MainActivity extends AppCompatActivity implements DialogCloseListen
 
         taskList = db.getAllTasks();
         Collections.reverse(taskList);
-        taskAdapter.setTaskList(taskList);
+
+        if (taskAdapter != null) {
+            taskAdapter.setTaskList(taskList);
+        }
+
+        //taskAdapter.setTaskList(taskList);
 
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
