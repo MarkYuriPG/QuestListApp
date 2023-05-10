@@ -12,6 +12,9 @@
         android:theme="@style/Theme.QuestListApp"
         tools:targetApi="31">
         <activity
+            android:name=".ProfileView"
+            android:exported="false" />
+        <activity
             android:name=".CalendarView"
             android:exported="false" />
         <activity
@@ -25,8 +28,16 @@
         </activity>
         <activity
             android:name=".MainActivity"
-            android:exported="true">
+            android:exported="true"
+
+            android:configChanges="uiMode">
             <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+            <intent-filter>
+
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />

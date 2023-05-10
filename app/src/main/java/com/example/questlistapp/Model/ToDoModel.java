@@ -8,7 +8,7 @@ import java.util.Locale;
 public class ToDoModel {
 
     private int id, status;
-    private String todo;
+    private String title, todo;
 
     private Date deadline;
 

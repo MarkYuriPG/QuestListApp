@@ -2,7 +2,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="match_parent"
     android:backgroundTint="@color/pastel_yellow"
     >
 
@@ -28,16 +28,5 @@
         android:textColor="@android:color/black"
         />
 
-    <Button
-        android:id="@+id/newQuestDeadlineButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:layout_below="@+id/newQuestText"
-        android:background="@android:drawable/btn_default"
-        android:text="Set Deadline"
-        android:textAllCaps="false"
-        android:textColor="@color/black"
-        android:textSize="16sp" />
 
 </RelativeLayout>

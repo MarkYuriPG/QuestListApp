@@ -2,6 +2,7 @@ package com.example.questlistapp;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatDelegate;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -39,7 +40,9 @@ public class MainActivity extends AppCompatActivity implements DialogCloseListen
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_main);
+
 
         Objects.requireNonNull(getSupportActionBar()).setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.caramel)));
 
@@ -90,6 +93,10 @@ public class MainActivity extends AppCompatActivity implements DialogCloseListen
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         switch(item.getItemId())
         {
+            case R.id.Profile:
+                Intent profile = new Intent(this, ProfileView.class);
+                startActivity(profile);
+                break;
             case R.id.MapItem:
                 Intent map = new Intent(Intent.ACTION_VIEW, Uri.parse("geo:10.316720, 123.890710"));
                 startActivity(map);
@@ -98,6 +105,14 @@ public class MainActivity extends AppCompatActivity implements DialogCloseListen
             case R.id.CalendarItem:
                 Intent calendar = new Intent(this, CalendarView.class);
                 startActivity(calendar);
+                break;
+
+            case R.id.Settings:
+                break;
+
+            case R.id.Exit:
+                finish();
+                System.exit(0);
                 break;
         }
         return true;

@@ -35,7 +35,7 @@ public class AddNewTask extends BottomSheetDialogFragment{
     public static final  String TAG = "ActionBottomDialog";
 
     private EditText newTaskText;
-    private Button newTaskSaveButton, newQuestDeadlineButton;
+    private Button newTaskSaveButton;
     private DatabaseHandler db;
     private Date deadline;
 
@@ -122,57 +122,6 @@ public class AddNewTask extends BottomSheetDialogFragment{
                 dismiss();
             }
         });
-
-       newQuestDeadlineButton = getView().findViewById(R.id.newQuestDeadlineButton);
-          newQuestDeadlineButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                showDatePickerDialog();
-            }
-        });
-
-    }
-
-    private void showDatePickerDialog() {
-        final Calendar calendar = Calendar.getInstance();
-
-        DatePickerDialog datePickerDialog = new DatePickerDialog(
-                requireContext(),
-                new DatePickerDialog.OnDateSetListener() {
-                    @Override
-                    public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
-                        calendar.set(Calendar.YEAR, year);
-                        calendar.set(Calendar.MONTH, monthOfYear);
-                        calendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
-                        showTimePickerDialog(calendar);
-                    }
-                },
-                calendar.get(Calendar.YEAR),
-                calendar.get(Calendar.MONTH),
-                calendar.get(Calendar.DAY_OF_MONTH)
-        );
-        datePickerDialog.show();
-    }
-
-    private void showTimePickerDialog(final Calendar calendar) {
-        final Calendar currentTime = Calendar.getInstance();
-
-        TimePickerDialog timePickerDialog = new TimePickerDialog(
-                requireContext(),
-                new TimePickerDialog.OnTimeSetListener() {
-                    @Override
-                    public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
-                        calendar.set(Calendar.HOUR_OF_DAY, hourOfDay);
-                        calendar.set(Calendar.MINUTE, minute);
-                        deadline = calendar.getTime();
-                        newQuestDeadlineButton.setText(formatDeadline(deadline));
-                    }
-                },
-                currentTime.get(Calendar.HOUR_OF_DAY),
-                currentTime.get(Calendar.MINUTE),
-                DateFormat.is24HourFormat(requireContext())
-        );
-        timePickerDialog.show();
     }
 
     private String formatDeadline(Date deadline) {
