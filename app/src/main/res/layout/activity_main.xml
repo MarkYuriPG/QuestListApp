@@ -21,11 +21,24 @@
         android:backgroundTint="@android:color/black"
         tools:ignore="HardcodedText"/>
 
+    <TextView
+        android:id="@+id/completedQuestCountTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/questsText"
+        android:layout_marginStart="16dp"
+        android:layout_marginBottom="16dp"
+        android:textSize="16sp"
+        android:text="Completed Quests: "
+        tools:ignore="HardcodedText"
+        android:textColor="@android:color/black"
+        />
+
     <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/questRecyclerView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@id/questsText"
+            android:layout_below="@id/completedQuestCountTextView"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             android:backgroundTint="@color/pastel_yellow"
             android:nestedScrollingEnabled="true"

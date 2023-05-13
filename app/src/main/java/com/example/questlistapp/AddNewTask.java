@@ -29,11 +29,13 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 
 public class AddNewTask extends BottomSheetDialogFragment{
     public static final  String TAG = "ActionBottomDialog";
 
+    private static List<ToDoModel> taskList;
     private EditText newTaskText;
     private Button newTaskSaveButton;
     private DatabaseHandler db;
@@ -84,7 +86,7 @@ public class AddNewTask extends BottomSheetDialogFragment{
 
         db = new DatabaseHandler(getActivity());
         db.openDatabase();
-
+        taskList = db.getAllTasks();
         newTaskText.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -116,7 +118,7 @@ public class AddNewTask extends BottomSheetDialogFragment{
                     db.updateTask(bundle.getInt("id"), text);
                 }
                 else {
-                    ToDoModel task = new ToDoModel(0, text,deadline);
+                    ToDoModel task = new ToDoModel(0, text,deadline, taskList.size());
                     db.insertTask(task);
                 }
                 dismiss();

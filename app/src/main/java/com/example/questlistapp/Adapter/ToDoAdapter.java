@@ -1,8 +1,11 @@
 package com.example.questlistapp.Adapter;
 
+import android.annotation.SuppressLint;
+import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.text.format.DateFormat;
 import android.util.Log;
@@ -30,18 +33,21 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
-public class ToDoAdapter extends RecyclerView.Adapter<ToDoAdapter.ViewHolder>
+public abstract class ToDoAdapter extends RecyclerView.Adapter<ToDoAdapter.ViewHolder> implements OnTaskCompleteListener
 {
 
     private static List <ToDoModel> todoList;
     private MainActivity activity;
     private static DatabaseHandler db;
 
-    public ToDoAdapter(DatabaseHandler db ,MainActivity activity)
+    private OnTaskCompleteListener onTaskCompleteListener;
+
+    public ToDoAdapter(DatabaseHandler db ,MainActivity activity, OnTaskCompleteListener onTaskCompleteListener)
     {
         this.db = db;
         this.activity = activity;
         this.todoList = db.getAllTasks();
+        this.onTaskCompleteListener = onTaskCompleteListener;
     }
 
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType)
@@ -53,7 +59,7 @@ public class ToDoAdapter extends RecyclerView.Adapter<ToDoAdapter.ViewHolder>
     }
 
 
-    public void onBindViewHolder(ViewHolder holder, int position)
+    public void onBindViewHolder(ViewHolder holder, @SuppressLint("RecyclerView") int position)
     {
             db.openDatabase();
             ToDoModel item = todoList.get(position);
@@ -71,11 +77,15 @@ public class ToDoAdapter extends RecyclerView.Adapter<ToDoAdapter.ViewHolder>
             holder.task.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 @Override
                 public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                    if (isChecked) {
+
+                    /*if (isChecked) {
                         db.updateStatus(item.getId(), 1);
                     } else {
                         db.updateStatus(item.getId(), 0);
-                    }
+                    }*/
+                    item.setStatus(isChecked ? 1 : 0);
+                    db.updateStatus(item.getId(), item.getStatus());
+                    onTaskCompleteListener.onTaskComplete(isChecked);
                 }
             });
     }
@@ -201,6 +211,5 @@ public class ToDoAdapter extends RecyclerView.Adapter<ToDoAdapter.ViewHolder>
             datePickerDialog.show();
         }
     }
-
 
 }

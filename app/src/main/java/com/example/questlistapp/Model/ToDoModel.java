@@ -7,17 +7,18 @@ import java.util.Locale;
 
 public class ToDoModel {
 
-    private int id, status;
+    private int id, status, order;
     private String title, todo;
 
     private Date deadline;
 
     public  ToDoModel(){}
 
-    public ToDoModel(int status, String todo, Date deadline) {
+    public ToDoModel(int status, String todo, Date deadline, int order) {
         this.status = status;
         this.todo = todo;
         this.deadline = deadline;
+        this.order = order;
     }
 
     public int getId() {
@@ -51,4 +52,13 @@ public class ToDoModel {
     public void setDeadline(Date deadline) {
         this.deadline = deadline;
     }
+
+    public int getOrder() {
+        return order;
+    }
+
+    public void setOrder(int order) {
+        this.order = order;
+    }
+
 }
