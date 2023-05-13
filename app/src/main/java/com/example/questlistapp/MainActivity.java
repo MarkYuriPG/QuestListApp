@@ -47,8 +47,6 @@ public class MainActivity extends AppCompatActivity implements DialogCloseListen
     private DatabaseHandler db;
     private List<ToDoModel> taskList;
     private FloatingActionButton fab;
-
-    private SwipeRefreshLayout swipeRefreshLayout;
     private SQLiteDatabase sqlDb;
 
     private int completedQuestCount;
