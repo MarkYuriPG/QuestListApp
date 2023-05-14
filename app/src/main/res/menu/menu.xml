@@ -16,24 +16,10 @@
     <item
         android:id="@+id/Settings"
         android:title="Settings"
-        android:icon="@drawable/ic_settings"
-        android:orderInCategory="100"
-        >
-
-        <menu>
-            <item
-                android:id="@+id/darkmode"
-                android:title="darkmode"/>
-
-            <item
-                android:id="@+id/darkmodee"
-                android:title="darkmodee"/>
-        </menu>
-
-    </item>
+        />
 
     <item
         android:id="@+id/Exit"
-        android:title="Exit" />
+        android:title="Logout" />
 
 </menu>

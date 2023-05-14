@@ -3,30 +3,29 @@ package com.example.questlistapp;
 import static com.example.questlistapp.Utils.DatabaseHandler.TODO_TABLE;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import android.annotation.SuppressLint;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.content.ContentValues;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewConfiguration;
-import android.widget.CompoundButton;
 import android.widget.TextView;
 
+import com.example.questlistapp.Adapter.OnDeleteListener;
 import com.example.questlistapp.Adapter.OnTaskCompleteListener;
 import com.example.questlistapp.Adapter.ToDoAdapter;
 import com.example.questlistapp.Model.ToDoModel;
@@ -40,7 +39,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 
-public class MainActivity extends AppCompatActivity implements DialogCloseListener, OnTaskCompleteListener {
+public class MainActivity extends AppCompatActivity implements DialogCloseListener, OnTaskCompleteListener, OnDeleteListener{
 
     private RecyclerView taskRecyclerView;
     private ToDoAdapter taskAdapter;
@@ -49,7 +48,7 @@ public class MainActivity extends AppCompatActivity implements DialogCloseListen
     private FloatingActionButton fab;
     private SQLiteDatabase sqlDb;
 
-    private int completedQuestCount;
+    private int completedQuestCount, totalQuestCount;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,7 +67,16 @@ public class MainActivity extends AppCompatActivity implements DialogCloseListen
 
         taskRecyclerView = findViewById(R.id.questRecyclerView);
         taskRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-        taskAdapter = new ToDoAdapter(db, MainActivity.this, this) {
+        taskAdapter = new ToDoAdapter(db, MainActivity.this, this, this) {
+
+            @Override
+            public void OnDelete(boolean isComplete) {
+                if(isComplete) {
+                    totalQuestCount--;
+                }
+                updateTotalQuestCount(totalQuestCount);
+            }
+
             @Override
             public void onTaskComplete(boolean isCompleted) {
                 if (isCompleted) {
@@ -91,6 +99,9 @@ public class MainActivity extends AppCompatActivity implements DialogCloseListen
         completedQuestCount = countCompletedTasks();
         updateCompletedQuestCount(completedQuestCount);
 
+        totalQuestCount = taskList.size();
+        updateTotalQuestCount(totalQuestCount);
+
         sortByOrder(taskList);
 
 
@@ -104,12 +115,19 @@ public class MainActivity extends AppCompatActivity implements DialogCloseListen
             @Override
             public void onClick(View v) {
                 AddNewTask.newInstance().show(getSupportFragmentManager(), AddNewTask.TAG);
+                totalQuestCount = taskList.size()+1;
+                updateTotalQuestCount(totalQuestCount);
             }
         });
 
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            NotificationChannel channel = new NotificationChannel("my_channel_id", "My Channel", NotificationManager.IMPORTANCE_DEFAULT);
+            NotificationManager notificationManager = getSystemService(NotificationManager.class);
+            notificationManager.createNotificationChannel(channel);
+        }
+
         ItemTouchHelper itemTouchHelper1 = new ItemTouchHelper(simpleCallback);
         itemTouchHelper1.attachToRecyclerView(taskRecyclerView);
-
     }
 
     @Override
@@ -139,6 +157,8 @@ public class MainActivity extends AppCompatActivity implements DialogCloseListen
                 break;
 
             case R.id.Settings:
+                Intent settings = new Intent(this, SettingsActivity.class);
+                startActivity(settings);
                 break;
 
             case R.id.Exit:
@@ -199,6 +219,12 @@ public class MainActivity extends AppCompatActivity implements DialogCloseListen
         completedTaskCountView.setText("Completed Quests: " + completedTaskCount);
     }
 
+    private void updateTotalQuestCount(int count)
+    {
+        @SuppressLint({"MissingInflatedId", "LocalSuppress"}) TextView totalQuestCountView = findViewById(R.id.totalQuestCountTextView);
+        totalQuestCountView.setText("Total Quests: " + count);
+    }
+
     public void updateTaskOrder(int taskId, int newOrder) {
         SQLiteDatabase sqldb = db.getWritableDatabase();
         ContentValues values = new ContentValues();
@@ -224,4 +250,16 @@ public class MainActivity extends AppCompatActivity implements DialogCloseListen
         }
         updateCompletedQuestCount(completedQuestCount);
     }
+
+    @Override
+    public void OnDelete(boolean isComplete) {
+        if(isComplete) {
+            if(totalQuestCount>0)
+                --totalQuestCount;
+            else
+                totalQuestCount = 0;
+        }
+        updateTotalQuestCount(totalQuestCount);
+    }
+
 }

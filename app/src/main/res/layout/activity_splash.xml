@@ -5,10 +5,21 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/pastel_yellow"
+    android:background="@color/flesh"
     tools:context=".SplashActivity">
 
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/imageView"
+        android:layout_marginStart="110dp"
+        android:fontFamily="serif-monospace"
+        android:text="Quest List"
+        android:textSize="32dp"/>
+
     <ImageView
+        android:id="@+id/imageView"
         android:layout_width="297dp"
         android:layout_height="312dp"
         android:layout_centerInParent="true"

@@ -1,11 +1,16 @@
 package com.example.questlistapp.Adapter;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
+import android.app.AlarmManager;
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
+import android.app.PendingIntent;
 import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.text.format.DateFormat;
 import android.util.Log;
@@ -18,9 +23,13 @@ import android.widget.DatePicker;
 import android.widget.TextView;
 import android.widget.TimePicker;
 
+import androidx.core.app.ActivityCompat;
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.questlistapp.AddNewTask;
+import com.example.questlistapp.DeadlineNotificationReceiver;
 import com.example.questlistapp.MainActivity;
 import com.example.questlistapp.Model.ToDoModel;
 import com.example.questlistapp.R;
@@ -33,25 +42,25 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
-public abstract class ToDoAdapter extends RecyclerView.Adapter<ToDoAdapter.ViewHolder> implements OnTaskCompleteListener
-{
+public abstract class ToDoAdapter extends RecyclerView.Adapter<ToDoAdapter.ViewHolder> implements OnTaskCompleteListener, OnDeleteListener {
 
-    private static List <ToDoModel> todoList;
+    private static List<ToDoModel> todoList;
     private MainActivity activity;
     private static DatabaseHandler db;
 
     private OnTaskCompleteListener onTaskCompleteListener;
+    private OnDeleteListener onDeleteListener;
 
-    public ToDoAdapter(DatabaseHandler db ,MainActivity activity, OnTaskCompleteListener onTaskCompleteListener)
-    {
+
+    public ToDoAdapter(DatabaseHandler db, MainActivity activity, OnTaskCompleteListener onTaskCompleteListener, OnDeleteListener onDeleteListener) {
         this.db = db;
         this.activity = activity;
         this.todoList = db.getAllTasks();
         this.onTaskCompleteListener = onTaskCompleteListener;
+        this.onDeleteListener = onDeleteListener;
     }
 
-    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType)
-    {
+    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View itemView = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.todolist_layout, parent, false);
 
@@ -59,85 +68,87 @@ public abstract class ToDoAdapter extends RecyclerView.Adapter<ToDoAdapter.ViewH
     }
 
 
-    public void onBindViewHolder(ViewHolder holder, @SuppressLint("RecyclerView") int position)
-    {
-            db.openDatabase();
-            ToDoModel item = todoList.get(position);
-            holder.task.setText(item.getTask());
+    public void onBindViewHolder(ViewHolder holder, @SuppressLint("RecyclerView") int position) {
+        db.openDatabase();
+        ToDoModel item = todoList.get(position);
+        holder.task.setText(item.getTask());
 
+        Date deadlineValue = item.getDeadline();
+        if (deadlineValue != null) {
+            holder.deadline.setText(formatDeadline(deadlineValue.getTime()));
+        } else {
+            holder.deadline.setText("Tap to set deadline");
+        }
 
-            Date deadlineValue = item.getDeadline();
-            if (deadlineValue != null) {
-                holder.deadline.setText(formatDeadline(deadlineValue.getTime()));
-            } else {
-                holder.deadline.setText("Tap to set deadline");
-            }
+        holder.task.setChecked(toBoolean(item.getStatus()));
+        holder.task.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 
-            holder.task.setChecked(toBoolean(item.getStatus()));
-            holder.task.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-                @Override
-                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-
-                    /*if (isChecked) {
+                   /* if (isChecked) {
                         db.updateStatus(item.getId(), 1);
                     } else {
                         db.updateStatus(item.getId(), 0);
                     }*/
-                    item.setStatus(isChecked ? 1 : 0);
-                    db.updateStatus(item.getId(), item.getStatus());
-                    onTaskCompleteListener.onTaskComplete(isChecked);
-                }
-            });
+                item.setStatus(isChecked ? 1 : 0);
+                db.updateStatus(item.getId(), item.getStatus());
+                onTaskCompleteListener.onTaskComplete(isChecked);
+            }
+        });
     }
+
     private String formatDeadline(long deadline) {
         Date date = new Date(deadline);
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd h:mm a", Locale.getDefault());
         return sdf.format(date);
     }
 
-    public int getItemCount()
-    {
+    public int getItemCount() {
         return todoList.size();
     }
 
-    private boolean toBoolean(int n)
-    {
-        return n!=0;
+    private boolean toBoolean(int n) {
+        return n != 0;
     }
 
-    public void setTaskList(List<ToDoModel> toDoList)
-    {
+    public void setTaskList(List<ToDoModel> toDoList) {
         this.todoList = toDoList;
         notifyDataSetChanged();
     }
-    public Context getContext(){
+
+    public Context getContext() {
         return activity;
     }
-    public void deleteItem(int position){
+
+    public void deleteItem(int position) {
         db.openDatabase();
         db.deleteTask(todoList.get(position).getId());
         todoList.remove(position);
         notifyItemRemoved(position);
+        onDeleteListener.OnDelete(true);
     }
-    public void setTask(List<ToDoModel> todoList){
+
+    public void setTask(List<ToDoModel> todoList) {
         this.todoList = todoList;
     }
-    public void editItem(int position){
+
+    public void editItem(int position) {
         ToDoModel item = todoList.get(position);
         Bundle bundle = new Bundle();
-        bundle.putInt("id",item.getId());
+        bundle.putInt("id", item.getId());
         bundle.putString("task", item.getTask());
         AddNewTask fragment = new AddNewTask();
         fragment.setArguments(bundle);
         fragment.show(activity.getSupportFragmentManager(), AddNewTask.TAG);
     }
-    public class  ViewHolder extends  RecyclerView.ViewHolder
-    {
+
+    public abstract void OnDelete(boolean isComplete);
+
+    public class ViewHolder extends RecyclerView.ViewHolder {
         CheckBox task;
         TextView deadline;
 
-        ViewHolder(View view)
-        {
+        ViewHolder(View view) {
             super(view);
             task = view.findViewById(R.id.todoCheckBox);
             deadline = view.findViewById(R.id.deadlineText);
@@ -156,7 +167,7 @@ public abstract class ToDoAdapter extends RecyclerView.Adapter<ToDoAdapter.ViewH
 
             // If there is already a deadline set, use that as the default date
             ToDoModel item = todoList.get(position);
-           if (item.getDeadline() != null) {
+            if (item.getDeadline() != null) {
                 Date deadline = item.getDeadline();
                 calendar.setTimeInMillis(deadline.getTime());
             }
@@ -165,6 +176,7 @@ public abstract class ToDoAdapter extends RecyclerView.Adapter<ToDoAdapter.ViewH
             DatePickerDialog datePickerDialog = new DatePickerDialog(
                     context,
                     new DatePickerDialog.OnDateSetListener() {
+                        @SuppressLint("MissingPermission")
                         @Override
                         public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
                             // Update the deadline in the database and refresh the list
@@ -190,6 +202,7 @@ public abstract class ToDoAdapter extends RecyclerView.Adapter<ToDoAdapter.ViewH
             TimePickerDialog timePickerDialog = new TimePickerDialog(
                     context,
                     new TimePickerDialog.OnTimeSetListener() {
+                        @SuppressLint("MissingPermission")
                         @Override
                         public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
                             // Update the deadline in the database and refresh the list
@@ -200,6 +213,15 @@ public abstract class ToDoAdapter extends RecyclerView.Adapter<ToDoAdapter.ViewH
                             db.updateDeadline(item.getId(), deadlineInMillis);
                             todoList.get(position).setDeadline(deadline);
                             notifyDataSetChanged();
+
+                            /*Intent notificationIntent = new Intent(context, DeadlineNotificationReceiver.class);
+                            PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+                            //int minutesBeforeNotification = 5; // Set this to the number of minutes you want to trigger the alarm before the notification
+                           // long alarmTimeInMillis = deadlineInMillis - minutesBeforeNotification * 60 * 1000; // Convert minutes to milliseconds
+                            AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+                            alarmManager.set(AlarmManager.RTC_WAKEUP, deadlineInMillis, pendingIntent);*/
+
                         }
                     },
                     currentTime.get(Calendar.HOUR_OF_DAY),
@@ -211,5 +233,6 @@ public abstract class ToDoAdapter extends RecyclerView.Adapter<ToDoAdapter.ViewH
             datePickerDialog.show();
         }
     }
+
 
 }

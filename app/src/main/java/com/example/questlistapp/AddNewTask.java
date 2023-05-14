@@ -1,22 +1,17 @@
 package com.example.questlistapp;
 
 import android.app.Activity;
-import android.app.DatePickerDialog;
-import android.app.TimePickerDialog;
 import android.content.DialogInterface;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.text.format.DateFormat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.Button;
-import android.widget.DatePicker;
 import android.widget.EditText;
-import android.widget.TimePicker;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -26,11 +21,9 @@ import com.example.questlistapp.Model.ToDoModel;
 import com.example.questlistapp.Utils.DatabaseHandler;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 
 public class AddNewTask extends BottomSheetDialogFragment{
     public static final  String TAG = "ActionBottomDialog";
@@ -42,6 +35,7 @@ public class AddNewTask extends BottomSheetDialogFragment{
     private Date deadline;
 
     private Calendar calendar = Calendar.getInstance();
+
 
     public  static  AddNewTask newInstance(){
         return  new AddNewTask();
@@ -118,17 +112,12 @@ public class AddNewTask extends BottomSheetDialogFragment{
                     db.updateTask(bundle.getInt("id"), text);
                 }
                 else {
-                    ToDoModel task = new ToDoModel(0, text,deadline, taskList.size());
+                    ToDoModel task = new ToDoModel(0, text,deadline, taskList.size()+1);
                     db.insertTask(task);
                 }
                 dismiss();
             }
         });
-    }
-
-    private String formatDeadline(Date deadline) {
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd h:mm a", Locale.getDefault());
-        return sdf.format(deadline);
     }
 
     @Override
@@ -137,4 +126,5 @@ public class AddNewTask extends BottomSheetDialogFragment{
         if(activity instanceof DialogCloseListener)
             ((DialogCloseListener)activity).handleDialogClose(dialog);
     }
+
 }
