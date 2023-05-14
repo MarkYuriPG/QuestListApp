@@ -1,5 +1,7 @@
 package com.example.questlistapp.Adapter;
 
+import static android.app.PendingIntent.FLAG_IMMUTABLE;
+
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.AlarmManager;
@@ -11,7 +13,10 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.media.RingtoneManager;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Vibrator;
 import android.text.format.DateFormat;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -26,6 +31,7 @@ import android.widget.TimePicker;
 import androidx.core.app.ActivityCompat;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.questlistapp.AddNewTask;
@@ -176,11 +182,9 @@ public abstract class ToDoAdapter extends RecyclerView.Adapter<ToDoAdapter.ViewH
             DatePickerDialog datePickerDialog = new DatePickerDialog(
                     context,
                     new DatePickerDialog.OnDateSetListener() {
-                        @SuppressLint("MissingPermission")
                         @Override
                         public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
                             // Update the deadline in the database and refresh the list
-                            Calendar calendar = Calendar.getInstance();
                             calendar.set(Calendar.YEAR, year);
                             calendar.set(Calendar.MONTH, monthOfYear);
                             calendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
@@ -196,13 +200,12 @@ public abstract class ToDoAdapter extends RecyclerView.Adapter<ToDoAdapter.ViewH
                     calendar.get(Calendar.DAY_OF_MONTH)
             );
 
-            final Calendar currentTime = Calendar.getInstance();
+            //final Calendar currentTime = Calendar.getInstance();
 
             // Create a TimePickerDialog and show it
             TimePickerDialog timePickerDialog = new TimePickerDialog(
                     context,
                     new TimePickerDialog.OnTimeSetListener() {
-                        @SuppressLint("MissingPermission")
                         @Override
                         public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
                             // Update the deadline in the database and refresh the list
@@ -214,18 +217,31 @@ public abstract class ToDoAdapter extends RecyclerView.Adapter<ToDoAdapter.ViewH
                             todoList.get(position).setDeadline(deadline);
                             notifyDataSetChanged();
 
-                            /*Intent notificationIntent = new Intent(context, DeadlineNotificationReceiver.class);
-                            PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+                            //long deadlineInMillis = item.getDeadline().getTime();
 
-                            //int minutesBeforeNotification = 5; // Set this to the number of minutes you want to trigger the alarm before the notification
-                           // long alarmTimeInMillis = deadlineInMillis - minutesBeforeNotification * 60 * 1000; // Convert minutes to milliseconds
-                            AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
-                            alarmManager.set(AlarmManager.RTC_WAKEUP, deadlineInMillis, pendingIntent);*/
+
+                            //DeadlineNotificationReceiver receiver = new DeadlineNotificationReceiver(context);
+                            // Set up alarm manager
+                           // AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+
+                            // Create intent to trigger alarm
+                            //Intent intent = new Intent(context, DeadlineNotificationReceiver.class);
+                           // PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, intent, FLAG_IMMUTABLE);
+
+                            // Set up calendar object with deadline date and time
+                            Calendar calendar = Calendar.getInstance();
+                            calendar.setTimeInMillis(deadline.getTime());
+                            calendar.set(Calendar.HOUR_OF_DAY, hourOfDay);
+                            calendar.set(Calendar.MINUTE, minute);
+
+                            // Schedule alarm
+                            /*alarmManager.setExact(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
+                            db.scheduleAlarm(deadlineInMillis, item.getId());*/
 
                         }
                     },
-                    currentTime.get(Calendar.HOUR_OF_DAY),
-                    currentTime.get(Calendar.MINUTE),
+                    calendar.get(Calendar.HOUR_OF_DAY),
+                    calendar.get(Calendar.MINUTE),
                     DateFormat.is24HourFormat(context)
             );
 

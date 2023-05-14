@@ -14,11 +14,11 @@
         android:layout_marginStart="100dp"
         android:layout_marginTop="316dp"
         android:ems="10"
-        android:hint="Input Password"
         android:inputType="textPassword"
         android:textAlignment="center"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        tools:ignore="SpeakableTextPresentCheck,TouchTargetSizeCheck" />
 
     <Button
         android:id="@+id/EnterButton"

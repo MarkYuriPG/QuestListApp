@@ -4,21 +4,34 @@ import static com.example.questlistapp.Utils.DatabaseHandler.TODO_TABLE;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
+import android.app.AlarmManager;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.content.pm.PackageManager;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.drawable.ColorDrawable;
+import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.SystemClock;
+import android.os.Vibrator;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -33,13 +46,16 @@ import com.example.questlistapp.Utils.DatabaseHandler;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.Objects;
 
-public class MainActivity extends AppCompatActivity implements DialogCloseListener, OnTaskCompleteListener, OnDeleteListener{
+public class MainActivity extends AppCompatActivity implements DialogCloseListener, OnTaskCompleteListener, OnDeleteListener {
 
     private RecyclerView taskRecyclerView;
     private ToDoAdapter taskAdapter;
@@ -50,6 +66,7 @@ public class MainActivity extends AppCompatActivity implements DialogCloseListen
 
     private int completedQuestCount, totalQuestCount;
 
+    @SuppressLint("MissingPermission")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -62,7 +79,7 @@ public class MainActivity extends AppCompatActivity implements DialogCloseListen
         db = new DatabaseHandler(this);
         db.openDatabase();
         sqlDb = db.getWritableDatabase();
-        taskList= new ArrayList<>();
+        taskList = new ArrayList<>();
 
 
         taskRecyclerView = findViewById(R.id.questRecyclerView);
@@ -71,7 +88,7 @@ public class MainActivity extends AppCompatActivity implements DialogCloseListen
 
             @Override
             public void OnDelete(boolean isComplete) {
-                if(isComplete) {
+                if (isComplete) {
                     totalQuestCount--;
                 }
                 updateTotalQuestCount(totalQuestCount);
@@ -115,19 +132,59 @@ public class MainActivity extends AppCompatActivity implements DialogCloseListen
             @Override
             public void onClick(View v) {
                 AddNewTask.newInstance().show(getSupportFragmentManager(), AddNewTask.TAG);
-                totalQuestCount = taskList.size()+1;
+                totalQuestCount = taskList.size() + 1;
                 updateTotalQuestCount(totalQuestCount);
             }
         });
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            NotificationChannel channel = new NotificationChannel("my_channel_id", "My Channel", NotificationManager.IMPORTANCE_DEFAULT);
+            CharSequence name = "MyChannel";
+            int importance = NotificationManager.IMPORTANCE_DEFAULT;
+            NotificationChannel channel = new NotificationChannel("MyChannelId", name, importance);
             NotificationManager notificationManager = getSystemService(NotificationManager.class);
             notificationManager.createNotificationChannel(channel);
         }
 
+        for (ToDoModel item : taskList) {
+            if (item == null || item.getDeadline() == null)
+                continue;
+
+            long deadlineInMillis = item.getDeadline().getTime();
+
+            if (System.currentTimeMillis() >= deadlineInMillis) {
+                // The deadline has passed, show the notification
+                NotificationCompat.Builder builder = new NotificationCompat.Builder(this.getApplicationContext(), "MyChannelId")
+                        .setSmallIcon(R.drawable.ic_settings)
+                        .setContentTitle("Quest ")
+                        .setContentText(item.getTask()+" deadline due " + formatDeadline(deadlineInMillis))
+                        .setPriority(NotificationCompat.PRIORITY_HIGH)
+                        .setAutoCancel(true);
+
+                NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
+                if (ActivityCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
+                    // TODO: Consider calling
+                    //    ActivityCompat#requestPermissions
+                    // here to request the missing permissions, and then overriding
+                    //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                    //                                          int[] grantResults)
+                    // to handle the case where the user grants the permission. See the documentation
+                    // for ActivityCompat#requestPermissions for more details.
+                    return;
+                }
+                notificationManager.notify(item.getId(), builder.build());
+                }
+
+            }
+
+
         ItemTouchHelper itemTouchHelper1 = new ItemTouchHelper(simpleCallback);
         itemTouchHelper1.attachToRecyclerView(taskRecyclerView);
+    }
+
+    private String formatDeadline(long deadline) {
+        Date date = new Date(deadline);
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd h:mm a", Locale.getDefault());
+        return sdf.format(date);
     }
 
     @Override

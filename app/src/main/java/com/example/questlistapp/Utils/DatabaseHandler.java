@@ -1,12 +1,23 @@
 package com.example.questlistapp.Utils;
 
+import static android.app.PendingIntent.FLAG_IMMUTABLE;
+
 import android.annotation.SuppressLint;
+import android.app.AlarmManager;
+import android.app.Application;
+import android.app.PendingIntent;
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.Intent;
 import android.database.Cursor;
+import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.os.Build;
+import android.util.Log;
 
+import com.example.questlistapp.DeadlineNotificationReceiver;
+import com.example.questlistapp.MainActivity;
 import com.example.questlistapp.Model.ToDoModel;
 
 import java.util.ArrayList;
@@ -29,8 +40,16 @@ public class DatabaseHandler extends SQLiteOpenHelper {
             + STATUS + " INTEGER, " + DEADLINE + " TEXT, " + ORDER + " INTEGER) ";
     private SQLiteDatabase db;
 
+    private Context context;
+
     public DatabaseHandler(Context context) {
         super(context, NAME, null, VERSION);
+        this.context = context;
+    }
+
+    public void setContext(Context context)
+    {
+        this.context = context;
     }
 
     @Override
@@ -75,6 +94,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     public List<ToDoModel> getAllTasks() {
         List<ToDoModel> taskList = new ArrayList<>();
         Cursor cur = null;
+        SQLiteDatabase db = this.getReadableDatabase();
         db.beginTransaction();
         try {
             cur = db.query(TODO_TABLE, null, null, null, null, null, "order_ DESC", null);
