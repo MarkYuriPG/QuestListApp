@@ -30,4 +30,15 @@
         android:text="Enter"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/mpinEditText" />
+
+    <Button
+        android:id="@+id/generatepassword"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="112dp"
+        android:layout_marginTop="92dp"
+        android:backgroundTint="@color/caramel"
+        android:text="Generate password"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/mpinEditText" />
 </androidx.constraintlayout.widget.ConstraintLayout>
