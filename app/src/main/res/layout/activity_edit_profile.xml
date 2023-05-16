@@ -55,50 +55,53 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <Button
-        android:id="@+id/editButton"
+        android:id="@+id/saveButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="128dp"
         android:layout_marginTop="504dp"
         android:backgroundTint="@color/caramel"
-        android:text="Edit Profile"
+        android:text="Save Changes"
         android:textColor="@android:color/white"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <TextView
-        android:id="@+id/profilename"
+    <EditText
+        android:id="@+id/editname"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="160dp"
-
-        android:layout_marginTop="344dp"
+        android:layout_marginStart="172dp"
+        android:textSize="14dp"
+        android:layout_marginTop="332dp"
         android:text=" Yuri"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <TextView
-        android:id="@+id/profilephone"
+    <EditText
+        android:id="@+id/editage"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="160dp"
-        android:layout_marginTop="380dp"
+        android:layout_marginStart="172dp"
+        android:layout_marginTop="372dp"
         android:text="21"
+        android:textSize="14dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <TextView
-        android:id="@+id/profilephonenumber"
+    <EditText
+        android:id="@+id/editphone"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="216dp"
+        android:layout_marginStart="204dp"
         android:layout_marginTop="412dp"
         android:text="09760392357"
+        android:textSize="14dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <TextView
-        android:id="@+id/profileemail"
+    <EditText
+        android:id="@+id/editemail"
+        android:textSize="14dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="224dp"
@@ -112,7 +115,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="96dp"
-        android:layout_marginTop="448dp"
+        android:layout_marginTop="460dp"
         android:text="Email address"
         android:textAlignment="center"
         android:textColor="@android:color/black"
