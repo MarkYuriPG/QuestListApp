@@ -162,6 +162,7 @@ public abstract class ToDoAdapter extends RecyclerView.Adapter<ToDoAdapter.ViewH
             deadline.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+
                     showDatePickerDialog(v.getContext(), getAdapterPosition());
                 }
             });

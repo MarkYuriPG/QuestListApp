@@ -7,6 +7,18 @@
     tools:context=".MainActivity"
     android:background="@color/flesh">
 
+
+    <ImageView
+        android:id="@+id/star"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:layout_marginStart="354dp"
+        android:layout_marginTop="42dp"
+        android:src="@drawable/ic_star"
+        android:visibility="invisible"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <TextView
         android:id="@+id/questsText"
         android:layout_width="wrap_content"

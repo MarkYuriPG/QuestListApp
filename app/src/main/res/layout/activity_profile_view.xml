@@ -73,16 +73,19 @@
         android:layout_marginStart="160dp"
 
         android:layout_marginTop="344dp"
+        android:hint="Yuri"
         android:text=" Yuri"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/profilephone"
+        android:id="@+id/profileage"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="160dp"
         android:layout_marginTop="380dp"
+
+        android:hint="21"
         android:text="21"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -94,11 +97,14 @@
         android:layout_marginStart="216dp"
         android:layout_marginTop="412dp"
         android:text="09760392357"
+        android:hint="09760392357"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/profileemail"
+
+        android:hint="mark@gmail.com"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="224dp"

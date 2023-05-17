@@ -26,6 +26,7 @@ import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.drawable.ColorDrawable;
+import android.media.Image;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Build;
@@ -36,7 +37,9 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.questlistapp.Adapter.OnDeleteListener;
 import com.example.questlistapp.Adapter.OnTaskCompleteListener;
@@ -63,8 +66,9 @@ public class MainActivity extends AppCompatActivity implements DialogCloseListen
     private List<ToDoModel> taskList;
     private FloatingActionButton fab;
     private SQLiteDatabase sqlDb;
-
-    private int completedQuestCount, totalQuestCount;
+    private ImageView star;
+    private int completedQuestCount, totalQuestCount,starCount =0;
+    private androidx.recyclerview.widget.RecyclerView clickerforstar;
 
     @SuppressLint("MissingPermission")
     @Override
@@ -72,7 +76,10 @@ public class MainActivity extends AppCompatActivity implements DialogCloseListen
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_main);
-
+//        STAR SYSTEM
+        star = findViewById(R.id.star);
+        star.setVisibility(View.INVISIBLE);
+        clickerforstar =findViewById(R.id.questRecyclerView);
 
         Objects.requireNonNull(getSupportActionBar()).setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.caramel)));
 
@@ -102,6 +109,7 @@ public class MainActivity extends AppCompatActivity implements DialogCloseListen
                     completedQuestCount--;
                 }
                 updateCompletedQuestCount(completedQuestCount);
+                updateStarCount();
             }
         };
         taskRecyclerView.setAdapter(taskAdapter);
@@ -119,6 +127,8 @@ public class MainActivity extends AppCompatActivity implements DialogCloseListen
         totalQuestCount = taskList.size();
         updateTotalQuestCount(totalQuestCount);
 
+
+
         sortByOrder(taskList);
 
 
@@ -128,6 +138,13 @@ public class MainActivity extends AppCompatActivity implements DialogCloseListen
 
         taskAdapter.setTaskList(taskList);
 
+//      SET STAR VISIBLE REWARD USER
+        clickerforstar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                updateStarCount();
+            }
+        });
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -274,6 +291,7 @@ public class MainActivity extends AppCompatActivity implements DialogCloseListen
     {
         @SuppressLint({"MissingInflatedId", "LocalSuppress"}) TextView completedTaskCountView = findViewById(R.id.completedQuestCountTextView);
         completedTaskCountView.setText("Completed Quests: " + completedTaskCount);
+        updateStarCount ();
     }
 
     private void updateTotalQuestCount(int count)
@@ -318,5 +336,15 @@ public class MainActivity extends AppCompatActivity implements DialogCloseListen
         }
         updateTotalQuestCount(totalQuestCount);
     }
+
+    public void updateStarCount (){
+            if(completedQuestCount == totalQuestCount)
+            {
+                ++starCount;
+                star.setVisibility(View.VISIBLE);
+                Toast.makeText(this, "You earned a star!", Toast.LENGTH_SHORT).show();
+            }
+    }
+
 
 }

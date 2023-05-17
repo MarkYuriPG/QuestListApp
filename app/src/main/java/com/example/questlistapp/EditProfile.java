@@ -1,8 +1,11 @@
 package com.example.questlistapp;
 
 import android.content.ContentValues;
+import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -14,14 +17,17 @@ public class EditProfile extends AppCompatActivity {
     private EditText ageEditText;
     private EditText phoneEditText;
     private EditText emailEditText;
+    private Button editprofile;
 
     private ProfileDatabaseHelper databaseHelper;
+    private int IMAGE_REQUEST_CODE;
 
     @Override
+
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit_profile);
-
+        editprofile = findViewById(R.id.editprofile);
         nameEditText = findViewById(R.id.editname);
         ageEditText = findViewById(R.id.editage);
         phoneEditText = findViewById(R.id.editphone);
@@ -31,7 +37,33 @@ public class EditProfile extends AppCompatActivity {
         saveButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                saveProfile();
+                String name = nameEditText.getText().toString();
+                String age = ageEditText.getText().toString();
+                String phone = phoneEditText.getText().toString();
+                String email = emailEditText.getText().toString();
+
+                // Create an intent to start the ProfileView activity
+
+                Intent intent = new Intent(EditProfile.this, ProfileView.class);
+
+                // Add the data as extras to the intent
+//                nameEditText.getText();
+//                saveProfile();
+
+                intent.putExtra("name", name);
+                intent.putExtra("age", age);
+                intent.putExtra("phone", phone);
+                intent.putExtra("email", email);
+                startActivity(intent);
+
+                finish();
+            }
+        });
+        editprofile.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                startActivityForResult(intent, IMAGE_REQUEST_CODE);
             }
         });
 
@@ -65,4 +97,12 @@ public class EditProfile extends AppCompatActivity {
         finish();
     }
 
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == IMAGE_REQUEST_CODE && resultCode == RESULT_OK && data != null) {
+            Uri imageUri = data.getData();
+            // Process the selected image
+        }
+    }
 }

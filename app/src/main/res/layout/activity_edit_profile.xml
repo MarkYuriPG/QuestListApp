@@ -18,37 +18,24 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+    <Button
+        android:id="@+id/editprofile"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="136dp"
+        android:layout_marginTop="342dp"
+        android:backgroundTint="@color/caramel"
+        android:text="Edit picture"
+        android:textColor="@android:color/white"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
     <TextView
         android:id="@+id/textNameField2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="96dp"
-        android:layout_marginTop="344dp"
-        android:text="Name"
-        android:textAlignment="center"
-        android:textColor="@android:color/black"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <TextView
-        android:id="@+id/textPhoneNumberField"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="96dp"
+        android:layout_marginStart="104dp"
         android:layout_marginTop="412dp"
-        android:text="Phone number"
-        android:textAlignment="center"
-        android:textColor="@android:color/black"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <TextView
-        android:id="@+id/textAgeField"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="96dp"
-        android:layout_marginTop="380dp"
-        android:text="Age"
+        android:text="Name"
         android:textAlignment="center"
         android:textColor="@android:color/black"
         app:layout_constraintStart_toStartOf="parent"
@@ -58,8 +45,8 @@
         android:id="@+id/saveButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="128dp"
-        android:layout_marginTop="504dp"
+        android:layout_marginStart="136dp"
+        android:layout_marginTop="572dp"
         android:backgroundTint="@color/caramel"
         android:text="Save Changes"
         android:textColor="@android:color/white"
@@ -67,23 +54,35 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <EditText
-        android:id="@+id/editname"
+        android:id="@+id/editemail"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="172dp"
+        android:layout_marginStart="232dp"
+        android:layout_marginTop="516dp"
+        android:text="mark@gmail.com"
         android:textSize="14dp"
-        android:layout_marginTop="332dp"
-        android:text=" Yuri"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/textEmailField"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="104dp"
+        android:layout_marginTop="528dp"
+        android:text="Email address"
+        android:textAlignment="center"
+        android:textColor="@android:color/black"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <EditText
-        android:id="@+id/editage"
+        android:id="@+id/editname"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="172dp"
-        android:layout_marginTop="372dp"
-        android:text="21"
+        android:layout_marginStart="180dp"
+        android:layout_marginTop="400dp"
+        android:text=" Yuri"
         android:textSize="14dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -92,31 +91,44 @@
         android:id="@+id/editphone"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="204dp"
-        android:layout_marginTop="412dp"
+        android:layout_marginStart="212dp"
+        android:layout_marginTop="480dp"
+        android:hint="09760392357"
         android:text="09760392357"
         android:textSize="14dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <EditText
-        android:id="@+id/editemail"
-        android:textSize="14dp"
+    <TextView
+        android:id="@+id/textAgeField"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="224dp"
+        android:layout_marginStart="104dp"
         android:layout_marginTop="448dp"
-        android:text="mark@gmail.com"
+        android:text="Age"
+        android:textAlignment="center"
+        android:textColor="@android:color/black"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <EditText
+        android:id="@+id/editage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="180dp"
+        android:layout_marginTop="440dp"
+        android:text="21"
+        android:textSize="14dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/textEmailField"
+        android:id="@+id/textPhoneNumberField"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="96dp"
-        android:layout_marginTop="460dp"
-        android:text="Email address"
+        android:layout_marginStart="104dp"
+        android:layout_marginTop="480dp"
+        android:text="Phone number"
         android:textAlignment="center"
         android:textColor="@android:color/black"
         app:layout_constraintStart_toStartOf="parent"
