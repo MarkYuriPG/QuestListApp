@@ -3,6 +3,7 @@ package com.example.questlistapp;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -11,13 +12,15 @@ import android.widget.Button;
 import android.widget.EditText;
 import androidx.appcompat.app.AppCompatActivity;
 
+import java.util.Objects;
+
 public class EditProfile extends AppCompatActivity {
 
     private EditText nameEditText;
     private EditText ageEditText;
     private EditText phoneEditText;
     private EditText emailEditText;
-    private Button editprofile;
+    private Button editprofile, cancel;
 
     private ProfileDatabaseHelper databaseHelper;
     private int IMAGE_REQUEST_CODE;
@@ -27,6 +30,10 @@ public class EditProfile extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit_profile);
+
+        Objects.requireNonNull(getSupportActionBar()).setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.caramel)));
+
+        cancel = findViewById(R.id.CancelButton);
         editprofile = findViewById(R.id.editprofile);
         nameEditText = findViewById(R.id.editname);
         ageEditText = findViewById(R.id.editage);
@@ -56,6 +63,13 @@ public class EditProfile extends AppCompatActivity {
                 intent.putExtra("email", email);
                 startActivity(intent);
 
+                finish();
+            }
+        });
+
+        cancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
                 finish();
             }
         });

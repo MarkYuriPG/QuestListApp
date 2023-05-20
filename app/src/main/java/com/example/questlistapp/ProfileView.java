@@ -1,10 +1,15 @@
 package com.example.questlistapp;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
+import android.net.Uri;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -80,5 +85,47 @@ public class ProfileView extends AppCompatActivity {
             phoneTextView.setText(phone);
             emailTextView.setText(email);
         }
+    }
+
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu, menu);
+        return true;
+    }
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        switch(item.getItemId())
+        {
+            case R.id.Home:
+                Intent home = new Intent(ProfileView.this, MainActivity.class);
+                startActivity(home);
+                finish();
+                break;
+            case R.id.Profile:
+                break;
+            case R.id.MapItem:
+                Intent map = new Intent(Intent.ACTION_VIEW, Uri.parse("geo:10.316720, 123.890710"));
+                startActivity(map);
+                finish();
+                break;
+
+            case R.id.CalendarItem:
+                Intent calendar = new Intent(this, CalendarView.class);
+                startActivity(calendar);
+                finish();
+                break;
+
+            case R.id.Settings:
+                Intent settings = new Intent(this, SettingsActivity.class);
+                startActivity(settings);
+                finish();
+                break;
+
+            case R.id.Exit:
+                finish();
+                System.exit(0);
+                break;
+        }
+        return true;
     }
 }

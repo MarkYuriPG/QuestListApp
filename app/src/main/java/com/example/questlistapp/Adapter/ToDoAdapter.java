@@ -91,13 +91,16 @@ public abstract class ToDoAdapter extends RecyclerView.Adapter<ToDoAdapter.ViewH
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 
-                   /* if (isChecked) {
+                    if (isChecked) {
                         db.updateStatus(item.getId(), 1);
+                        item.setStatus(1);
                     } else {
                         db.updateStatus(item.getId(), 0);
-                    }*/
-                item.setStatus(isChecked ? 1 : 0);
-                db.updateStatus(item.getId(), item.getStatus());
+                        item.setStatus(0);
+                    }
+
+                /*item.setStatus(isChecked ? 1 : 0);
+                db.updateStatus(item.getId(), item.getStatus());*/
                 onTaskCompleteListener.onTaskComplete(isChecked);
             }
         });
@@ -246,6 +249,7 @@ public abstract class ToDoAdapter extends RecyclerView.Adapter<ToDoAdapter.ViewH
                     DateFormat.is24HourFormat(context)
             );
 
+            item.setDeadline(calendar.getTime());
             timePickerDialog.show();
             datePickerDialog.show();
         }

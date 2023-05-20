@@ -33,6 +33,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.os.Vibrator;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -48,6 +49,8 @@ import com.example.questlistapp.Model.ToDoModel;
 import com.example.questlistapp.Utils.DatabaseHandler;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.firebase.FirebaseApp;
+import com.google.firebase.messaging.FirebaseMessaging;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -67,17 +70,31 @@ public class MainActivity extends AppCompatActivity implements DialogCloseListen
     private FloatingActionButton fab;
     private SQLiteDatabase sqlDb;
     private ImageView star;
+    private TextView starCtr;
     private int completedQuestCount, totalQuestCount,starCount =0;
     private androidx.recyclerview.widget.RecyclerView clickerforstar;
 
-    @SuppressLint("MissingPermission")
+    @SuppressLint({"MissingPermission", "MissingInflatedId"})
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        FirebaseApp.initializeApp(this);
+
+        FirebaseMessaging.getInstance().getToken()
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        String token = task.getResult();
+                        Log.d("FCM Token", token);
+                        // Save or send the token to your server for later use
+                    } else {
+                        Log.e("FCM Token", "Failed to get token");
+                    }
+                });
 
         setContentView(R.layout.activity_main);
 //        STAR SYSTEM
         star = findViewById(R.id.star);
+        starCtr = findViewById(R.id.starCountText);
         star.setVisibility(View.INVISIBLE);
         clickerforstar =findViewById(R.id.questRecyclerView);
 
@@ -168,11 +185,18 @@ public class MainActivity extends AppCompatActivity implements DialogCloseListen
 
             long deadlineInMillis = item.getDeadline().getTime();
 
-            if (System.currentTimeMillis() >= deadlineInMillis) {
+            if (System.currentTimeMillis() >= deadlineInMillis - (3 * 24 * 60 * 60 * 1000)) {
+                Intent intent = new Intent(this, MainActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                // You can pass any necessary data to the activity using intent.putExtra()
+
+                // Create the pending intent
+
+                PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
                 // The deadline has passed, show the notification
                 NotificationCompat.Builder builder = new NotificationCompat.Builder(this.getApplicationContext(), "MyChannelId")
-                        .setSmallIcon(R.drawable.ic_settings)
-                        .setContentTitle("Quest ")
+                        .setSmallIcon(R.drawable.questlist_logo)
+                        .setContentTitle("HEY, DO YOUR QUEST!")
                         .setContentText(item.getTask()+" deadline due " + formatDeadline(deadlineInMillis))
                         .setPriority(NotificationCompat.PRIORITY_HIGH)
                         .setAutoCancel(true);
@@ -188,11 +212,9 @@ public class MainActivity extends AppCompatActivity implements DialogCloseListen
                     // for ActivityCompat#requestPermissions for more details.
                     return;
                 }
-                notificationManager.notify(item.getId(), builder.build());
-                }
-
+                    notificationManager.notify(item.getId(), builder.build());
             }
-
+        }
 
         ItemTouchHelper itemTouchHelper1 = new ItemTouchHelper(simpleCallback);
         itemTouchHelper1.attachToRecyclerView(taskRecyclerView);
@@ -216,23 +238,29 @@ public class MainActivity extends AppCompatActivity implements DialogCloseListen
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         switch(item.getItemId())
         {
+            case R.id.Home:
+                break;
             case R.id.Profile:
                 Intent profile = new Intent(this, ProfileView.class);
                 startActivity(profile);
+                finish();
                 break;
             case R.id.MapItem:
                 Intent map = new Intent(Intent.ACTION_VIEW, Uri.parse("geo:10.316720, 123.890710"));
                 startActivity(map);
+                finish();
                 break;
 
             case R.id.CalendarItem:
                 Intent calendar = new Intent(this, CalendarView.class);
                 startActivity(calendar);
+                finish();
                 break;
 
             case R.id.Settings:
                 Intent settings = new Intent(this, SettingsActivity.class);
                 startActivity(settings);
+                finish();
                 break;
 
             case R.id.Exit:
@@ -262,8 +290,12 @@ public class MainActivity extends AppCompatActivity implements DialogCloseListen
             int toPos = target.getAdapterPosition();
 
             // update the order value of the moved item
-            db.updateOrder(taskList.get(fromPos).getId(), fromPos);
-            db.updateOrder(taskList.get(toPos).getId(), toPos);
+            taskList.get(fromPos).setOrder(toPos);
+            taskList.get(toPos).setOrder(fromPos);
+
+            db.updateOrder(taskList.get(fromPos).getId(), taskList.get(toPos).getOrder());
+            db.updateOrder(taskList.get(toPos).getId(), taskList.get(fromPos).getOrder());
+
 
             Collections.swap(taskList, fromPos, toPos);
             recyclerView.getAdapter().notifyItemMoved(fromPos, toPos);
@@ -338,10 +370,11 @@ public class MainActivity extends AppCompatActivity implements DialogCloseListen
     }
 
     public void updateStarCount (){
-            if(completedQuestCount == totalQuestCount)
+            if(completedQuestCount%5==0 && completedQuestCount!=0)
             {
                 ++starCount;
                 star.setVisibility(View.VISIBLE);
+                starCtr.setText(Integer.toString(starCount));
                 Toast.makeText(this, "You earned a star!", Toast.LENGTH_SHORT).show();
             }
     }

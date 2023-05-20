@@ -149,8 +149,11 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 
     public void updateOrder(int id, int pos)
     {
+        SQLiteDatabase db = this.getWritableDatabase();
+
         ContentValues values = new ContentValues();
         values.put(ORDER, pos);
+
         db.update(TODO_TABLE, values, ID + "=?", new String[]{String.valueOf(id)});
     }
 
