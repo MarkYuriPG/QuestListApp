@@ -8,7 +8,9 @@ import java.util.Locale;
 public class ToDoModel {
 
     private int id, status, order;
-    private String title, todo;
+    private String todo;
+
+    private String imageUri;
 
     private Date deadline;
 
@@ -59,6 +61,14 @@ public class ToDoModel {
 
     public void setOrder(int order) {
         this.order = order;
+    }
+
+    public String getImageUri() {
+        return imageUri;
+    }
+
+    public void setImageUri(String imageUri) {
+        this.imageUri = imageUri;
     }
 
 }

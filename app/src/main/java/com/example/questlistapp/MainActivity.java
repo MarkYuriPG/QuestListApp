@@ -25,6 +25,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Bitmap;
 import android.graphics.drawable.ColorDrawable;
 import android.media.Image;
 import android.media.RingtoneManager;
@@ -33,6 +34,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.os.Vibrator;
+import android.provider.MediaStore;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -52,6 +54,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.messaging.FirebaseMessaging;
 
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -63,6 +66,7 @@ import java.util.Objects;
 
 public class MainActivity extends AppCompatActivity implements DialogCloseListener, OnTaskCompleteListener, OnDeleteListener {
 
+    private static final int REQUEST_CAMERA_PERMISSION = 1;
     private RecyclerView taskRecyclerView;
     private ToDoAdapter taskAdapter;
     private DatabaseHandler db;
@@ -73,6 +77,9 @@ public class MainActivity extends AppCompatActivity implements DialogCloseListen
     private TextView starCtr;
     private int completedQuestCount, totalQuestCount,starCount =0;
     private androidx.recyclerview.widget.RecyclerView clickerforstar;
+    private static final int REQUEST_IMAGE_CAPTURE = 1;
+    private static final int REQUEST_IMAGE_PICK = 2;
+
 
     @SuppressLint({"MissingPermission", "MissingInflatedId"})
     @Override
@@ -80,6 +87,11 @@ public class MainActivity extends AppCompatActivity implements DialogCloseListen
         super.onCreate(savedInstanceState);
         FirebaseApp.initializeApp(this);
 
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+            // Permission is not granted, request it
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA}, REQUEST_CAMERA_PERMISSION);
+        }
+        
         FirebaseMessaging.getInstance().getToken()
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
@@ -108,7 +120,7 @@ public class MainActivity extends AppCompatActivity implements DialogCloseListen
 
         taskRecyclerView = findViewById(R.id.questRecyclerView);
         taskRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-        taskAdapter = new ToDoAdapter(db, MainActivity.this, this, this) {
+        taskAdapter = new ToDoAdapter(db, MainActivity.this, this, this, taskRecyclerView) {
 
             @Override
             public void OnDelete(boolean isComplete) {
@@ -218,6 +230,18 @@ public class MainActivity extends AppCompatActivity implements DialogCloseListen
 
         ItemTouchHelper itemTouchHelper1 = new ItemTouchHelper(simpleCallback);
         itemTouchHelper1.attachToRecyclerView(taskRecyclerView);
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == REQUEST_CAMERA_PERMISSION) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                // Camera permission granted, you can now proceed with camera-related operations
+            } else {
+                // Camera permission denied, handle this situation (e.g., show an error message)
+            }
+        }
     }
 
     private String formatDeadline(long deadline) {
@@ -379,5 +403,45 @@ public class MainActivity extends AppCompatActivity implements DialogCloseListen
             }
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
+            // The image capture was successful
+            // You can retrieve the captured image from the `data` intent if needed
+            int position = requestCode - REQUEST_IMAGE_CAPTURE;
+            Bundle extras = data.getExtras();
+            if (extras != null){
+                Bitmap imageBitmap = (Bitmap) extras.get("data");
+
+            // Do something with the captured image
+            ToDoAdapter.ViewHolder viewHolder = (ToDoAdapter.ViewHolder) taskRecyclerView.findViewHolderForAdapterPosition(position);
+            if (viewHolder != null) {
+                viewHolder.changePhoto(position, imageBitmap);
+            }}
+
+
+        } else if (requestCode == REQUEST_IMAGE_PICK && resultCode == RESULT_OK) {
+            // The image selection was successful
+            // You can retrieve the selected image from the `data` intent if needed
+
+            // Do something with the selected image
+            int position = requestCode - REQUEST_IMAGE_PICK;
+            Uri selectedImageUri = data.getData();
+
+            try {
+                Bitmap imageBitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), selectedImageUri);
+
+                // Update the photo at the specified position in the RecyclerView
+                ToDoAdapter.ViewHolder viewHolder = (ToDoAdapter.ViewHolder) taskRecyclerView.findViewHolderForAdapterPosition(position);
+                if (viewHolder != null) {
+                    viewHolder.changePhoto(position, imageBitmap);
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
 
 }

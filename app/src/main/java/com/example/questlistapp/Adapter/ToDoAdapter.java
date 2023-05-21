@@ -1,5 +1,6 @@
 package com.example.questlistapp.Adapter;
 
+import static android.app.Activity.RESULT_OK;
 import static android.app.PendingIntent.FLAG_IMMUTABLE;
 
 import android.Manifest;
@@ -13,18 +14,23 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Vibrator;
+import android.provider.MediaStore;
 import android.text.format.DateFormat;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.DatePicker;
+import android.widget.ImageView;
+import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.TimePicker;
 
@@ -56,14 +62,19 @@ public abstract class ToDoAdapter extends RecyclerView.Adapter<ToDoAdapter.ViewH
 
     private OnTaskCompleteListener onTaskCompleteListener;
     private OnDeleteListener onDeleteListener;
+    private static final int REQUEST_IMAGE_CAPTURE = 1;
+    private static final int REQUEST_IMAGE_PICK = 2;
+
+    private RecyclerView recyclerView;
 
 
-    public ToDoAdapter(DatabaseHandler db, MainActivity activity, OnTaskCompleteListener onTaskCompleteListener, OnDeleteListener onDeleteListener) {
+    public ToDoAdapter(DatabaseHandler db, MainActivity activity, OnTaskCompleteListener onTaskCompleteListener, OnDeleteListener onDeleteListener, RecyclerView recyclerView) {
         this.db = db;
         this.activity = activity;
         this.todoList = db.getAllTasks();
         this.onTaskCompleteListener = onTaskCompleteListener;
         this.onDeleteListener = onDeleteListener;
+        this.recyclerView = recyclerView;
     }
 
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -153,14 +164,22 @@ public abstract class ToDoAdapter extends RecyclerView.Adapter<ToDoAdapter.ViewH
 
     public abstract void OnDelete(boolean isComplete);
 
+
     public class ViewHolder extends RecyclerView.ViewHolder {
         CheckBox task;
         TextView deadline;
+        ImageView image;
 
         ViewHolder(View view) {
             super(view);
             task = view.findViewById(R.id.todoCheckBox);
             deadline = view.findViewById(R.id.deadlineText);
+            image = view.findViewById(R.id.thumbnail);
+
+            ViewGroup.LayoutParams layoutParams = image.getLayoutParams();
+            layoutParams.width = 100;
+            layoutParams.height = 100;
+            image.setLayoutParams(layoutParams);
 
             deadline.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -169,7 +188,56 @@ public abstract class ToDoAdapter extends RecyclerView.Adapter<ToDoAdapter.ViewH
                     showDatePickerDialog(v.getContext(), getAdapterPosition());
                 }
             });
+
+            image.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    int position = getAdapterPosition();
+                    showImageOptions(view, position);
+                }
+            });
         }
+        public void changePhoto(int position, Bitmap bitmap) {
+            if (getAdapterPosition() == position) {
+                image.setImageBitmap(bitmap);
+            }
+        }
+        private void showImageOptions(View view, int position) {
+            PopupMenu popupMenu = new PopupMenu(view.getContext(), view);
+            popupMenu.getMenuInflater().inflate(R.menu.image_source_menu, popupMenu.getMenu());
+            popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                @Override
+                public boolean onMenuItemClick(MenuItem item) {
+                    switch (item.getItemId()) {
+                        case R.id.cameraOption:
+                            // Handle the camera option
+                            takePictureFromCamera(position);
+                            return true;
+                        case R.id.galleryOption:
+                            // Handle the gallery option
+                            choosePictureFromGallery(position);
+                            return true;
+                        default:
+                            return false;
+                    }
+                }
+            });
+
+            popupMenu.show();
+        }
+        public void choosePictureFromGallery(int position) {
+            Intent pickPhotoIntent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+            pickPhotoIntent.setType("image/*");
+            activity.startActivityForResult(pickPhotoIntent, REQUEST_IMAGE_PICK+ position);
+        }
+
+        public void takePictureFromCamera(int position) {
+            Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+            if (takePictureIntent.resolveActivity(activity.getPackageManager()) != null) {
+                activity.startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE+ position);
+            }
+        }
+
 
         // Show a date picker dialog when the user clicks on the deadline TextView
         private void showDatePickerDialog(Context context, int position) {
@@ -254,6 +322,7 @@ public abstract class ToDoAdapter extends RecyclerView.Adapter<ToDoAdapter.ViewH
             datePickerDialog.show();
         }
     }
+    
 
 
 }

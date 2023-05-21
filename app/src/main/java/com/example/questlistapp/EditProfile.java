@@ -3,6 +3,7 @@ package com.example.questlistapp;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Bitmap;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
@@ -10,6 +11,8 @@ import android.provider.MediaStore;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
+
 import androidx.appcompat.app.AppCompatActivity;
 
 import java.util.Objects;
@@ -21,9 +24,12 @@ public class EditProfile extends AppCompatActivity {
     private EditText phoneEditText;
     private EditText emailEditText;
     private Button editprofile, cancel;
-
+    private ImageView image;
+    private static final int REQUEST_IMAGE_CAPTURE = 1;
+    private static final int REQUEST_IMAGE_PICK = 2;
+    private static final int IMAGE_REQUEST_CODE = 3;
     private ProfileDatabaseHelper databaseHelper;
-    private int IMAGE_REQUEST_CODE;
+
 
     @Override
 
@@ -39,7 +45,7 @@ public class EditProfile extends AppCompatActivity {
         ageEditText = findViewById(R.id.editage);
         phoneEditText = findViewById(R.id.editphone);
         emailEditText = findViewById(R.id.editemail);
-
+        image = findViewById(R.id.imageAvatarView);
         Button saveButton = findViewById(R.id.saveButton);
         saveButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -76,12 +82,25 @@ public class EditProfile extends AppCompatActivity {
         editprofile.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+               Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
                 startActivityForResult(intent, IMAGE_REQUEST_CODE);
             }
         });
 
         databaseHelper = new ProfileDatabaseHelper(this);
+    }
+
+    public void selectPhoto(View view) {
+        Intent pickPhotoIntent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+        pickPhotoIntent.setType("image/*");
+        startActivityForResult(pickPhotoIntent, REQUEST_IMAGE_PICK);
+    }
+
+    public void capturePhoto(View view) {
+        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
+            startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
+        }
     }
 
     private void saveProfile() {
@@ -117,6 +136,16 @@ public class EditProfile extends AppCompatActivity {
         if (requestCode == IMAGE_REQUEST_CODE && resultCode == RESULT_OK && data != null) {
             Uri imageUri = data.getData();
             // Process the selected image
+        }
+        if (resultCode == RESULT_OK) {
+            if (requestCode == REQUEST_IMAGE_CAPTURE) {
+                Bundle extras = data.getExtras();
+                Bitmap imageBitmap = (Bitmap) extras.get("data");
+                image.setImageBitmap(imageBitmap);
+            } else if (requestCode == REQUEST_IMAGE_PICK) {
+                Uri selectedImageUri = data.getData();
+                image.setImageURI(selectedImageUri);
+            }
         }
     }
 }
