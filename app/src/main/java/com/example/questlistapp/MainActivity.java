@@ -79,6 +79,7 @@ public class MainActivity extends AppCompatActivity implements DialogCloseListen
     private androidx.recyclerview.widget.RecyclerView clickerforstar;
     private static final int REQUEST_IMAGE_CAPTURE = 1;
     private static final int REQUEST_IMAGE_PICK = 2;
+    private static final int NOTIFICATION_ID = 1;
 
 
     @SuppressLint({"MissingPermission", "MissingInflatedId"})
@@ -209,7 +210,7 @@ public class MainActivity extends AppCompatActivity implements DialogCloseListen
                 NotificationCompat.Builder builder = new NotificationCompat.Builder(this.getApplicationContext(), "MyChannelId")
                         .setSmallIcon(R.drawable.questlist_logo)
                         .setContentTitle("HEY, DO YOUR QUEST!")
-                        .setContentText(item.getTask()+" deadline due " + formatDeadline(deadlineInMillis))
+                        .setContentText(item.getTask()+" deadline is " + formatDeadline(deadlineInMillis))
                         .setPriority(NotificationCompat.PRIORITY_HIGH)
                         .setAutoCancel(true);
 
@@ -226,6 +227,7 @@ public class MainActivity extends AppCompatActivity implements DialogCloseListen
                 }
                     notificationManager.notify(item.getId(), builder.build());
             }
+            scheduleDeadline(item);
         }
 
         ItemTouchHelper itemTouchHelper1 = new ItemTouchHelper(simpleCallback);
@@ -401,6 +403,32 @@ public class MainActivity extends AppCompatActivity implements DialogCloseListen
                 starCtr.setText(Integer.toString(starCount));
                 Toast.makeText(this, "You earned a star!", Toast.LENGTH_SHORT).show();
             }
+    }
+
+    private void scheduleDeadlineAlarm(long deadlineInMillis) {
+        // Create an intent for the deadline notification receiver
+        Intent intent = new Intent(this, DeadlineNotificationReceiver.class);
+        intent.putExtra("QUEST DEADLINE", "Your deadline is in 3-days."); // Pass task information if needed
+
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(this, NOTIFICATION_ID, intent, 0);
+
+        // Get the AlarmManager system service
+        AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+
+        // Schedule the alarm
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            // For API level 23 and above
+            alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, deadlineInMillis, pendingIntent);
+        } else {
+            // For API level below 23
+            alarmManager.setExact(AlarmManager.RTC_WAKEUP, deadlineInMillis, pendingIntent);
+        }
+    }
+
+    // Call this method wherever you want to schedule the deadline alarm
+    private void scheduleDeadline(ToDoModel todo) {
+        long deadlineInMillis = todo.getDeadline().getTime();
+        scheduleDeadlineAlarm(deadlineInMillis);
     }
 
     @Override

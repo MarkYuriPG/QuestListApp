@@ -14,7 +14,6 @@
         android:layout_height="199dp"
         android:layout_marginStart="104dp"
         android:layout_marginTop="132dp"
-        android:src="@drawable/baseline_person_24"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 

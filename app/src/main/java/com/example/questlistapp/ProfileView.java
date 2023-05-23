@@ -24,6 +24,7 @@ public class ProfileView extends AppCompatActivity {
     private TextView phoneTextView;
     private TextView emailTextView;
 
+    private ImageView mImageView;
     private static final int EDIT_PROFILE_REQUEST = 1;
 
     @Override
@@ -35,9 +36,9 @@ public class ProfileView extends AppCompatActivity {
 
         Objects.requireNonNull(getSupportActionBar()).setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.caramel)));
 
-        ImageView mImageView;
+
         mImageView = findViewById(R.id.imageAvatarView);
-        mImageView.setImageResource(R.drawable.baseline_person_24);
+       // mImageView.setImageResource(R.drawable.baseline_person_24);
 
         nameTextView = findViewById(R.id.profilename);
         ageTextView = findViewById(R.id.profileage);
@@ -61,6 +62,14 @@ public class ProfileView extends AppCompatActivity {
             String phone = intent.getStringExtra("phone");
             String email = intent.getStringExtra("email");
 
+            String imageUriString = intent.getStringExtra("imageUri");
+            if (imageUriString != null) {
+                Uri imageUri = Uri.parse(imageUriString);
+                mImageView.setImageURI(imageUri);
+            } else {
+                // Set the default image if no image URI is available
+                mImageView.setImageResource(R.drawable.baseline_person_24);
+            }
 // Update the profile information
             nameTextView.setText(name);
             ageTextView.setText(age);
@@ -84,6 +93,12 @@ public class ProfileView extends AppCompatActivity {
             ageTextView.setText(age);
             phoneTextView.setText(phone);
             emailTextView.setText(email);
+
+            String imageUriString = data.getStringExtra("imageUri");
+            if (imageUriString != null) {
+                Uri imageUri = Uri.parse(imageUriString);
+                mImageView.setImageURI(imageUri);
+            }
         }
     }
 

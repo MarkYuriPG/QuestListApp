@@ -83,8 +83,9 @@ public class ChangePasswordActivity extends AppCompatActivity implements View.On
                 if(validateCurrentPassword(current, passwordDb))
                 {
                     validateChangePassword(password1, password2, passwordDb);
-                    Intent settings = new Intent(ChangePasswordActivity.this, SettingsActivity.class);
-                    startActivity(settings);
+                    finish();
+                    /*Intent settings = new Intent(ChangePasswordActivity.this, SettingsActivity.class);
+                    startActivity(settings);*/
                     break;
                 }else {
                     Toast.makeText(ChangePasswordActivity.this, "Incorrect current password.", Toast.LENGTH_SHORT).show();
